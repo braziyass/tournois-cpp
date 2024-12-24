@@ -2,6 +2,8 @@
 #define REFEREE_H
 
 #include <string>
+#include <vector>
+std::vector<Referee> referees;
 
 class Referee {
 public:
@@ -12,6 +14,9 @@ public:
     
     std::string getCertifications() const;
     void setCertifications(const std::string& certifications);
+
+    void inputReferee();
+    void displayReferee() const;
     
 private:
     std::string name;

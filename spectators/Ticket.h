@@ -2,7 +2,11 @@
 #define TICKET_H
 
 #include <string>
+#include <vector>
 #include "../matches/Match.h"
+
+std::vector<Ticket> tickets;
+extern std::vector<Match> matches;
 
 class Ticket {
 public:

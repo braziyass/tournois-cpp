@@ -2,7 +2,10 @@
 #define RESULT_H
 
 #include <string>
+#include <vector>
 #include "../matches/Match.h"
+std::vector<Result> results;
+extern std::vector<Match> matches;
 
 class Result {
 public:
@@ -16,15 +19,16 @@ public:
     
     int getScoreTeam2() const;
     void setScoreTeam2(int score);
+
+    void inputResult();
+    void displayResult() const;
+    void AfterMatchCalculations();
     
-    std::string getRecordedAt() const;
-    void setRecordedAt(const std::string& time);
     
 private:
     Match* match;
     int scoreTeam1;
     int scoreTeam2;
-    std::string recordedAt;
 };
 
 #endif // RESULT_H

@@ -2,9 +2,12 @@
 #include <iostream>
 
 
-Team::Team(const std::string& name, int ranking) : name(name), ranking(ranking) {}
+Team::Team(const std::string& name)
+    : name(name) {}
 
-Team::Team() : name(""), ranking(0) {}
+Team::Team() : Team("") {}
+
+
 
 std::string Team::getName() const {
     return name;
@@ -14,38 +17,54 @@ void Team::setName(const std::string& name) {
     this->name = name;
 }
 
-int Team::getRanking() const {
-    return ranking;
+int Team::getGamesPlayed() const {
+    return gamesPlayed;
 }
 
-void Team::setRanking(int ranking) {
-    this->ranking = ranking;
+void Team::incrementGamesPlayed() {
+    gamesPlayed++;
 }
 
-std::string Team::getField() const {
-    return field;
+int Team::getWins() const {
+    return wins;
 }
 
-void Team::setField(const std::string& field) {
-    this->field = field;
+void Team::incrementWins() {
+    wins++;
 }
 
-int Team::getCapacity() const {
-    return capacity;
+
+int Team::getDraws() const {
+    return draws;
 }
 
-void Team::setCapacity(int capacity) {
-    this->capacity = capacity;
+void Team::incrementDraws() {
+    draws++;
+}
+
+int Team::getLosses() const {
+    return losses;
+}
+
+void Team::incrementLosses() {
+    losses++;
 }
 
 void Team::inputTeam() {
     std::cout << "Enter team name: ";
     std::cin.ignore(); 
     std::getline(std::cin, name);
-    std::cout << "Enter team field: ";
-    std::cin.ignore();
-    std::getline(std::cin, field);
-    std::cout << "Enter field capacity: ";
-    std::cin.ignore();
-    std::cin >> capacity;
+}
+
+void Team::displayTeam() const {
+    std::cout << "Team name: " << name << std::endl;
+    std::cout << "Games played: " << gamesPlayed << std::endl;
+    std::cout << "Wins: " << wins << std::endl;
+    std::cout << "Draws: " << draws << std::endl;
+    std::cout << "Losses: " << losses << std::endl;
+    std::cout << "Points: " << calculatePoints() << std::endl;
+}
+
+int Team::calculatePoints() const {
+    return wins * 3 + draws;
 }

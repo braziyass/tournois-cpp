@@ -6,13 +6,10 @@
 
 class Ranking {
 public:
-    Ranking(Team* team, int points, int gamesPlayed, int wins, int draws, int losses);
+    Ranking(Team* team, int gamesPlayed, int wins, int draws, int losses);
     
     Team* getTeam() const;
     void setTeam(Team* team);
-    
-    int getPoints() const;
-    void setPoints(int points);
     
     int getGamesPlayed() const;
     void setGamesPlayed(int gamesPlayed);
@@ -28,7 +25,6 @@ public:
     
 private:
     Team* team;
-    int points;
     int gamesPlayed;
     int wins;
     int draws;

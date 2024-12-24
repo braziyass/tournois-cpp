@@ -1,7 +1,7 @@
 #include "Ranking.h"
 
-Ranking::Ranking(Team* team, int points, int gamesPlayed, int wins, int draws, int losses)
-    : team(team), points(points), gamesPlayed(gamesPlayed), wins(wins), draws(draws), losses(losses) {}
+Ranking::Ranking(Team* team, int gamesPlayed, int wins, int draws, int losses)
+    : team(team), gamesPlayed(gamesPlayed), wins(wins), draws(draws), losses(losses) {}
 
 Team* Ranking::getTeam() const {
     return team;
@@ -9,14 +9,6 @@ Team* Ranking::getTeam() const {
 
 void Ranking::setTeam(Team* team) {
     this->team = team;
-}
-
-int Ranking::getPoints() const {
-    return points;
-}
-
-void Ranking::setPoints(int points) {
-    this->points = points;
 }
 
 int Ranking::getGamesPlayed() const {

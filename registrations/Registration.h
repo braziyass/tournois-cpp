@@ -2,7 +2,11 @@
 #define REGISTRATION_H
 
 #include <string>
+#include <vector>
 #include "../teams/Team.h"
+
+std::vector<Registration> registrations;
+extern std::vector<Team> teams;
 
 class Registration {
 public:

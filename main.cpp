@@ -13,14 +13,14 @@
 
 int main() {
     int choice;
-    std::vector<Team> teams;
-    std::vector<Field> fields;
-    std::vector<Match> matches;
-    std::vector<Registration> registrations;
-    std::vector<Referee> referees;
-    std::vector<Result> results;
-    std::vector<Ticket> tickets;
-    std::vector<Ranking> rankings;
+    extern std::vector<Team> teams;
+    extern std::vector<Field> fields;
+    extern std::vector<Match> matches;
+    extern std::vector<Registration> registrations;
+    extern std::vector<Referee> referees;
+    extern std::vector<Result> results;
+    extern std::vector<Ticket> tickets;
+    extern std::vector<Ranking> rankings;
 
     do {
         std::cout << "=== Football Tournament Manager ===\n";

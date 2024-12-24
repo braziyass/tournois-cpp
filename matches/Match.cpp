@@ -1,15 +1,9 @@
 #include "Match.h"
+#include <iostream>
 
-Match::Match(const std::string& phase, Team* team1, Team* team2, Field* field, const std::string& scheduledTime)
-    : phase(phase), team1(team1), team2(team2), field(field), scheduledTime(scheduledTime), referee(nullptr) {}
+Match::Match(Team* team1, Team* team2, const std::string& scheduledTime)
+    : team1(team1), team2(team2), scheduledTime(scheduledTime), referee(nullptr) {}
 
-std::string Match::getPhase() const {
-    return phase;
-}
-
-void Match::setPhase(const std::string& phase) {
-    this->phase = phase;
-}
 
 Team* Match::getTeam1() const {
     return team1;
@@ -27,14 +21,6 @@ void Match::setTeam2(Team* team) {
     this->team2 = team;
 }
 
-Field* Match::getField() const {
-    return field;
-}
-
-void Match::setField(Field* field) {
-    this->field = field;
-}
-
 std::string Match::getScheduledTime() const {
     return scheduledTime;
 }
@@ -49,4 +35,90 @@ Referee* Match::getReferee() const {
 
 void Match::setReferee(Referee* referee) {
     this->referee = referee;
+}
+
+bool Match::isPlayed() const {
+    return played;
+}
+
+void Match::setPlayed(bool played) {
+    this->played = played;
+}
+
+void Match::inputMatch() {
+    std::cout << "Enter team 1: ";
+    std::string team1Name;
+    std::cin.ignore();
+    std::getline(std::cin, team1Name);
+    team1 = nullptr;
+    for (Team& team : teams) {
+        if (team.getName() == team1Name) {
+            team1 = &team;
+            break;
+        }
+    }
+    if (!team1) {
+        std::cout << "Team not found." << std::endl;
+        return;
+    }
+    
+    std::cout << "Enter team 2: ";
+    std::string team2Name;
+    std::getline(std::cin, team2Name);
+    team2 = nullptr;
+    for (Team& team : teams) {
+        if (team.getName() == team2Name) {
+            team2 = &team;
+            break;
+        }
+    }
+    if (!team2) {
+        std::cout << "Team not found." << std::endl;
+        return;
+    }
+    
+    std::cout << "Enter scheduled time: ";
+    std::cin.ignore();
+    std::getline(std::cin, scheduledTime);
+    
+    std::cout << "Enter referee name: ";
+    std::string refereeName;
+    std::getline(std::cin, refereeName);
+    referee = nullptr;
+    for (Referee& ref : referees) {
+        if (ref.getName() == refereeName) {
+            referee = &ref;
+            break;
+        }
+    }
+    if (!referee) {
+        std::cout << "Referee not found." << std::endl;
+        return;
+    }
+
+    std::cout << "Enter field name: ";
+    std::string fieldName;
+    std::getline(std::cin, fieldName);
+    field = nullptr;
+    for (Field& f : fields) {
+        if (f.getName() == fieldName) {
+            field = &f;
+            break;
+        }
+    }
+    if (!field) {
+        std::cout << "Field not found." << std::endl;
+        return;
+    }
+
+}
+
+void Match::displayNonPlayedMatch() const {
+    if (!played) {
+        std::cout << "Team 1: " << team1->getName() << std::endl;
+        std::cout << "Team 2: " << team2->getName() << std::endl;
+        std::cout << "Scheduled time: " << scheduledTime << std::endl;
+        std::cout << "Referee: " << referee->getName() << std::endl;
+        std::cout << "Field: " << field->getName() << std::endl;
+    }
 }

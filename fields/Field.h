@@ -4,6 +4,8 @@
 #include <string>
 #include "../teams/Team.h"
 
+std::vector<Field> fields;
+
 class Field {
 public:
     Field(const std::string& name, int capacity);
@@ -14,14 +16,12 @@ public:
     int getCapacity() const;
     void setCapacity(int capacity);
 
-    Team* getTeam() const;
-    void setTeam(Team* team);
+    void displayField() const;
+    void inputField();
     
 private:
     std::string name;
     int capacity;
-    Team* team;
-
 };
 
 #endif // FIELD_H

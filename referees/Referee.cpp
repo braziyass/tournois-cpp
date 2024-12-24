@@ -1,4 +1,5 @@
 #include "Referee.h"
+#include <iostream>
 
 Referee::Referee(const std::string& name, const std::string& certifications)
     : name(name), certifications(certifications) {}
@@ -17,4 +18,18 @@ std::string Referee::getCertifications() const {
 
 void Referee::setCertifications(const std::string& certifications) {
     this->certifications = certifications;
+}
+
+void Referee::inputReferee() {
+    std::cout << "Enter referee name: ";
+    std::cin.ignore();
+    std::getline(std::cin, name);
+    std::cout << "Enter referee certifications: ";
+    std::cin.ignore();
+    std::getline(std::cin, certifications);
+}
+
+void Referee::displayReferee() const {
+    std::cout << "Referee name: " << name << std::endl;
+    std::cout << "Referee certifications: " << certifications << std::endl;
 }
