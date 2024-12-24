@@ -46,7 +46,7 @@ public:
     void setPlayed(bool played);
 
     void inputMatch();
-    void displayNonPlayedMatch() const;
+    void displayMatch() const;
     
 private:
     Team* team1;

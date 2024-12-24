@@ -3,6 +3,8 @@
 
 #include <string>
 #include "../teams/Team.h"
+#include <vector>
+#include "../seats/Seat.h"
 
 std::vector<Field> fields;
 
@@ -22,6 +24,7 @@ public:
 private:
     std::string name;
     int capacity;
+    std::vector<Seat> seats;
 };
 
 #endif // FIELD_H

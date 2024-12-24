@@ -8,27 +8,35 @@
 std::vector<Ticket> tickets;
 extern std::vector<Match> matches;
 
+const int VIP_PRICE = 100;
+const int REGULAR_PRICE = 50;
+
 class Ticket {
 public:
-    Ticket(Match* match, const std::string& seatNumber, double price);
+    Ticket(int id, Match* match, Seat* seat, double price);
+
+    int getId() const;
+    void setId(int id);
     
     Match* getMatch() const;
     void setMatch(Match* match);
-    
-    std::string getSeatNumber() const;
-    void setSeatNumber(const std::string& seatNumber);
-    
+
+    Seat* getSeat() const;
+    void setSeat(Seat* seat);
+
     double getPrice() const;
     void setPrice(double price);
+
+    void displayTicket() const;
+    void inputTicket();
     
-    bool isAvailable() const;
-    void setAvailability(bool available);
     
 private:
+    int id;
     Match* match;
-    std::string seatNumber;
+    Seat* seat;
     double price;
-    bool available;
+
 };
 
 #endif // TICKET_H

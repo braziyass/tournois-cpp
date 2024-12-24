@@ -52,7 +52,6 @@ void Match::inputMatch() {
     int phase;
     std::cin >> phase;
     this->phase = static_cast<MatchPhase>(phase);
-    
 
     std::cout << "Enter team 1: ";
     std::string team1Name;
@@ -61,6 +60,10 @@ void Match::inputMatch() {
     team1 = nullptr;
     for (Team& team : teams) {
         if (team.getName() == team1Name) {
+            if (team.isInscris() == false) {
+                std::cout << "Team 1 not registered." << std::endl;
+                return;
+            }
             team1 = &team;
             break;
         }
@@ -76,6 +79,10 @@ void Match::inputMatch() {
     team2 = nullptr;
     for (Team& team : teams) {
         if (team.getName() == team2Name) {
+            if (team.isInscris() == false) {
+                std::cout << "Team 2 not registered." << std::endl;
+                return;
+            }
             team2 = &team;
             break;
         }
@@ -124,12 +131,8 @@ void Match::inputMatch() {
 
 }
 
-void Match::displayNonPlayedMatch() const {
-    if (!played) {
-        std::cout << "Team 1: " << team1->getName() << std::endl;
-        std::cout << "Team 2: " << team2->getName() << std::endl;
-        std::cout << "Scheduled time: " << scheduledTime << std::endl;
-        std::cout << "Referee: " << referee->getName() << std::endl;
-        std::cout << "Field: " << field->getName() << std::endl;
-    }
+void Match::displayMatch() const {
+
+    std::cout << "Match: " << team1->getName() << " vs " << team2->getName() << " on " << scheduledTime << std::endl;
+
 }

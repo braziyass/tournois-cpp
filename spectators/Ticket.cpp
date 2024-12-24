@@ -1,7 +1,9 @@
 #include "Ticket.h"
+#include <iostream>
 
-Ticket::Ticket(Match* match, const std::string& seatNumber, double price)
-    : match(match), seatNumber(seatNumber), price(price), available(true) {}
+Ticket::Ticket(int id, Match* match, Seat* seat, double price)
+    : id(id), match(match), seat(seat), price(price) {}
+
 
 Match* Ticket::getMatch() const {
     return match;
@@ -11,12 +13,12 @@ void Ticket::setMatch(Match* match) {
     this->match = match;
 }
 
-std::string Ticket::getSeatNumber() const {
-    return seatNumber;
+Seat* Ticket::getSeat() const {
+    return seat;
 }
 
-void Ticket::setSeatNumber(const std::string& seatNumber) {
-    this->seatNumber = seatNumber;
+void Ticket::setSeat(Seat* seat) {
+    this->seat = seat;
 }
 
 double Ticket::getPrice() const {
@@ -27,10 +29,22 @@ void Ticket::setPrice(double price) {
     this->price = price;
 }
 
-bool Ticket::isAvailable() const {
-    return available;
+void Ticket::displayTicket() const {
+    std::cout << "Ticket ID: " << id << ", Match: " << match->getTeam1()->getName() << " vs " << match->getTeam2()->getName()
+              << ", Seat: " << seat->getNum() << ", Price: $" << price << std::endl;
 }
 
-void Ticket::setAvailability(bool available) {
-    this->available = available;
+void Ticket::inputTicket() {
+    std::cout << "Enter ticket ID: ";
+    std::cin >> id;
+    std::cout << "Enter match: ";
+    int matchIndex=0;
+    for (Match& m : matches) {
+        std::cout << matchIndex << m.displayMatch() << std::endl;
+        matchIndex++;
+    }
+    std::cin >> matchIndex;
+    match = &matches[matchIndex];
+    
+    seat->inputSeat();
 }
