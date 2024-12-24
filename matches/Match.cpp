@@ -131,8 +131,7 @@ void Match::inputMatch() {
 
 }
 
-void Match::displayMatch() const {
+std::string Match::displayMatch() const {
 
-    std::cout << "Match: " << team1->getName() << " vs " << team2->getName() << " on " << scheduledTime << std::endl;
-
+    return "Match: " + team1->getName() + " vs " + team2->getName() + " on " + scheduledTime;
 }

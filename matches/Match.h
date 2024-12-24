@@ -46,7 +46,7 @@ public:
     void setPlayed(bool played);
 
     void inputMatch();
-    void displayMatch() const;
+    std::string displayMatch() const;
     
 private:
     Team* team1;
