@@ -37,6 +37,7 @@ void Match::setReferee(Referee* referee) {
     this->referee = referee;
 }
 
+
 bool Match::isPlayed() const {
     return played;
 }
@@ -46,6 +47,13 @@ void Match::setPlayed(bool played) {
 }
 
 void Match::inputMatch() {
+
+    std::cout << "Enter match phase (0 - GroupStage, 1 - QuarterFinal, 2 - SemiFinal, 3 - Final): ";
+    int phase;
+    std::cin >> phase;
+    this->phase = static_cast<MatchPhase>(phase);
+    
+
     std::cout << "Enter team 1: ";
     std::string team1Name;
     std::cin.ignore();
@@ -97,6 +105,9 @@ void Match::inputMatch() {
     }
 
     std::cout << "Enter field name: ";
+    for (Field& f : fields) {
+       std::cout << f.getName() << std::endl;
+    }
     std::string fieldName;
     std::getline(std::cin, fieldName);
     field = nullptr;

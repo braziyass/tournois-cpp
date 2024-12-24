@@ -39,6 +39,9 @@ public:
     Referee* getReferee() const;
     void setReferee(Referee* referee);
 
+    MatchPhase getPhase() const;
+    void setPhase(MatchPhase phase);
+
     bool isPlayed() const;
     void setPlayed(bool played);
 
@@ -49,7 +52,7 @@ private:
     Team* team1;
     Team* team2;
     Field* field;
-    
+    MatchPhase phase;
     std::string scheduledTime;
     Referee* referee;
     bool played = false;

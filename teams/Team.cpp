@@ -17,6 +17,15 @@ void Team::setName(const std::string& name) {
     this->name = name;
 }
 
+
+bool Team::isInscris() const {
+    return inscris;
+}
+
+void Team::setInscris(bool inscris) {
+    this->inscris = inscris;
+}
+
 int Team::getGamesPlayed() const {
     return gamesPlayed;
 }

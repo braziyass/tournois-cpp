@@ -19,7 +19,7 @@ public:
     void setDateRegistered(const std::string& date);
     
     bool isValidated() const;
-    void setValidated(bool validated);
+    void Validate();
     
 private:
     Team* team;

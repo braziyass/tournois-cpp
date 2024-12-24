@@ -22,6 +22,7 @@ bool Registration::isValidated() const {
     return validated;
 }
 
-void Registration::setValidated(bool validated) {
-    this->validated = validated;
+void Registration::Validate() {
+    this->validated = true;
+    this->team->setInscris(true);
 }

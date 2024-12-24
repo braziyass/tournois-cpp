@@ -14,6 +14,9 @@ public:
     std::string getName() const;
     void setName(const std::string& name);
 
+    bool isInscris() const;
+    void setInscris(bool inscris);
+
     int getGamesPlayed() const;
     void incrementGamesPlayed();
 
@@ -32,6 +35,7 @@ public:
     
 private:
     std::string name;
+    bool inscris = false;
     int gamesPlayed = 0;
     int wins = 0;
     int draws = 0;
