@@ -1,4 +1,5 @@
 #include "Registration.h"
+#include <iostream>
 
 Registration::Registration(Team* team) : team(team), dateRegistered(""), validated(false) {}
 
@@ -25,4 +26,20 @@ bool Registration::isValidated() const {
 void Registration::Validate() {
     this->validated = true;
     this->team->setInscris(true);
+}
+
+void Registration::inValidate() {
+    this->validated = false;
+    this->team->setInscris(false);
+}
+
+void Registration::inputRegistration() {
+    std::cout << "Entrez la date d'inscription: ";
+    std::getline(std::cin, dateRegistered);
+}
+
+void Registration::displayRegistration() const {
+    std::cout << "Équipe: " << team->getName()
+              << ", Date Inscription: " << dateRegistered
+              << ", Validée: " << (validated ? "Oui" : "Non") << std::endl;
 }

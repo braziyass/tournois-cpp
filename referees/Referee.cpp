@@ -22,10 +22,8 @@ void Referee::setCertifications(const std::string& certifications) {
 
 void Referee::inputReferee() {
     std::cout << "Enter referee name: ";
-    std::cin.ignore();
     std::getline(std::cin, name);
     std::cout << "Enter referee certifications: ";
-    std::cin.ignore();
     std::getline(std::cin, certifications);
 }
 

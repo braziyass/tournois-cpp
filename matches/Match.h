@@ -8,10 +8,6 @@
 #include "../fields/Field.h"
 
 
-std::vector<Match> matches;
-extern std::vector<Referee> referees;
-extern std::vector<Team> teams;
-extern std::vector<Field> fields;
 
 enum class MatchPhase {
     GroupStage,
@@ -32,6 +28,9 @@ public:
     
     Team* getTeam2() const;
     void setTeam2(Team* team);
+
+    Field* getField() const;
+    void setField(Field* field);
     
     std::string getScheduledTime() const;
     void setScheduledTime(const std::string& time);
@@ -55,7 +54,13 @@ private:
     MatchPhase phase;
     std::string scheduledTime;
     Referee* referee;
-    bool played = false;
+    bool played = true;
 };
+
+extern std::vector<Match> matches;
+extern std::vector<Referee> referees;
+extern std::vector<Team> teams;
+extern std::vector<Field> fields;
+
 
 #endif // MATCH_H

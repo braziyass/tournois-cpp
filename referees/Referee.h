@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-std::vector<Referee> referees;
+
 
 class Referee {
 public:
@@ -22,5 +22,8 @@ private:
     std::string name;
     std::string certifications;
 };
+
+extern std::vector<Referee> referees;
+
 
 #endif // REFEREE_H

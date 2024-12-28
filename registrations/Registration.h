@@ -5,8 +5,7 @@
 #include <vector>
 #include "../teams/Team.h"
 
-std::vector<Registration> registrations;
-extern std::vector<Team> teams;
+
 
 class Registration {
 public:
@@ -20,11 +19,18 @@ public:
     
     bool isValidated() const;
     void Validate();
+    void inValidate();
+
+    void inputRegistration();
+    void displayRegistration() const;
     
 private:
     Team* team;
     std::string dateRegistered;
     bool validated;
 };
+
+extern std::vector<Registration> registrations;
+extern std::vector<Team> teams;
 
 #endif // REGISTRATION_H

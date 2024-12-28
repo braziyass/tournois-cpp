@@ -6,7 +6,7 @@
 #include <vector>
 #include "../seats/Seat.h"
 
-std::vector<Field> fields;
+
 
 class Field {
 public:
@@ -20,11 +20,16 @@ public:
 
     void displayField() const;
     void inputField();
+
+    std::vector<Seat>& getSeats();
+
     
 private:
     std::string name;
     int capacity;
     std::vector<Seat> seats;
 };
+
+extern std::vector<Field> fields;
 
 #endif // FIELD_H

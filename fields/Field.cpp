@@ -23,9 +23,15 @@ void Field::displayField() const {
     std::cout << "Field Name: " << name << ", Capacity: " << capacity << std::endl;
 }
 
+
+
 void Field::inputField() {
     std::cout << "Enter field name: ";
     std::getline(std::cin, name);
     std::cout << "Enter field capacity: ";
     std::cin >> capacity;
+}
+
+std::vector<Seat>& Field::getSeats() {
+    return seats;
 }

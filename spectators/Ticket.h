@@ -5,11 +5,10 @@
 #include <vector>
 #include "../matches/Match.h"
 
-std::vector<Ticket> tickets;
-extern std::vector<Match> matches;
 
-const int VIP_PRICE = 100;
-const int REGULAR_PRICE = 50;
+
+// const int VIP_PRICE = 100;
+// const int REGULAR_PRICE = 50;
 
 class Ticket {
 public:
@@ -38,5 +37,8 @@ private:
     double price;
 
 };
+
+extern std::vector<Ticket> tickets;
+extern std::vector<Match> matches;
 
 #endif // TICKET_H

@@ -4,8 +4,7 @@
 #include <string>
 #include <vector>
 #include "../matches/Match.h"
-std::vector<Result> results;
-extern std::vector<Match> matches;
+
 
 class Result {
 public:
@@ -30,5 +29,8 @@ private:
     int scoreTeam1;
     int scoreTeam2;
 };
+
+extern std::vector<Result> results;
+extern std::vector<Match> matches;
 
 #endif // RESULT_H

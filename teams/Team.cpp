@@ -5,7 +5,7 @@
 Team::Team(const std::string& name)
     : name(name) {}
 
-Team::Team() : Team("") {}
+
 
 
 
@@ -61,7 +61,6 @@ void Team::incrementLosses() {
 
 void Team::inputTeam() {
     std::cout << "Enter team name: ";
-    std::cin.ignore(); 
     std::getline(std::cin, name);
 }
 

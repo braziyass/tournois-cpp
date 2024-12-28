@@ -11,8 +11,7 @@ enum class SeatType {
 class Seat {
 
 public:
-    Seat(int n) : num(n) {}
-
+    Seat(int n);
     int getNum() const;
     void setNum(int n);
 

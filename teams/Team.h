@@ -4,12 +4,11 @@
 #include <string>
 #include <vector>
 
-std::vector<Team> teams;
+
 
 class Team {
 public:
     Team(const std::string& name = "");
-    Team();
     
     std::string getName() const;
     void setName(const std::string& name);
@@ -41,5 +40,7 @@ private:
     int draws = 0;
     int losses = 0;
 };
+
+extern std::vector<Team> teams;
 
 #endif // TEAM_H

@@ -21,6 +21,14 @@ void Match::setTeam2(Team* team) {
     this->team2 = team;
 }
 
+Field* Match::getField() const {
+    return field;
+}
+
+void Match::setField(Field* field) {
+    this->field = field;
+}
+
 std::string Match::getScheduledTime() const {
     return scheduledTime;
 }
@@ -35,6 +43,14 @@ Referee* Match::getReferee() const {
 
 void Match::setReferee(Referee* referee) {
     this->referee = referee;
+}
+
+MatchPhase Match::getPhase() const {
+    return phase;
+}
+
+void Match::setPhase(MatchPhase phase) {
+    this->phase = phase;
 }
 
 

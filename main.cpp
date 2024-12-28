@@ -1,609 +1,776 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cstdlib>
 #include <ctime>
 #include "teams/Team.h"
 #include "fields/Field.h"
 #include "matches/Match.h"
-#include "registrations/Registration.h"
 #include "referees/Referee.h"
 #include "spectators/Ticket.h"
 #include "results/Result.h"
-#include "rankings/Ranking.h"
+#include "registrations/Registration.h"
+#include "seats/Seat.h"
+
+// Constants for ticket prices
+const double VIP_PRICE = 100.0;
+const double REGULAR_PRICE = 50.0;
+
+using namespace std;
+
+// Function declarations
+void manageTeams();
+void manageFields();
+void scheduleMatches();
+void manageRegistrations();
+void manageReferees();
+void manageSpectators();
+void recordResults();
+void displayRankings();
+Team* searchTeamByName(const string& name);
+Field* searchFieldByName(const string& name);
+Referee* searchRefereeByName(const string& name);
+
+// Global vectors
+vector<Team> teams;
+vector<Field> fields;
+vector<Match> matches;
+vector<Referee> referees;
+vector<Registration> registrations;
+vector<Result> results;
+vector<Ticket> tickets;
 
 int main() {
-    int choice;
-    extern std::vector<Team> teams;
-    extern std::vector<Field> fields;
-    extern std::vector<Match> matches;
-    extern std::vector<Registration> registrations;
-    extern std::vector<Referee> referees;
-    extern std::vector<Result> results;
-    extern std::vector<Ticket> tickets;
-    extern std::vector<Ranking> rankings;
+    srand(time(0)); // Initialize random seed
 
+    int choice;
     do {
-        std::cout << "=== Football Tournament Manager ===\n";
-        std::cout << "1. Manage Teams\n";
-        std::cout << "2. Manage Fields\n";
-        std::cout << "3. Schedule Matches\n";
-        std::cout << "4. Manage Registrations\n";
-        std::cout << "5. Assign Referees\n";
-        std::cout << "6. Manage Tickets\n";
-        std::cout << "7. Record Results\n";
-        std::cout << "8. View Rankings\n";
-        std::cout << "0. Exit\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
+        cout << "=== Gestionnaire de Tournoi de Football ===\n";
+        cout << "1. Gestion des Équipes\n";
+        cout << "2. Gestion des Terrains\n";
+        cout << "3. Planification des Matchs\n";
+        cout << "4. Inscriptions\n";
+        cout << "5. Gestion des Arbitres\n";
+        cout << "6. Gestion des Spectateurs\n";
+        cout << "7. Enregistrement des Résultats\n";
+        cout << "8. Classement des Équipes\n";
+        cout << "0. Quitter\n";
+        cout << "Entrez votre choix: ";
+        cin >> choice;
+        cin.ignore(); // Clear newline from buffer
 
         switch(choice) {
-            case 1: {
-                int teamChoice;
-                do {
-                    std::cout << "\n--- Manage Teams ---\n";
-                    std::cout << "1. Add Team\n";
-                    std::cout << "2. Remove Team\n";
-                    std::cout << "3. View Teams\n";
-                    std::cout << "0. Return to Main Menu\n";
-                    std::cout << "Enter your choice: ";
-                    std::cin >> teamChoice;
-
-                    if(teamChoice == 1) {
-                        std::string name;
-                        int ranking;
-                        std::cout << "Enter team name: ";
-                        std::cin.ignore(); // Clear newline from buffer
-                        std::getline(std::cin, name);
-                        std::cout << "Enter team ranking: ";
-                        std::cin >> ranking;
-                        teams.emplace_back(name, ranking);
-                        // Initialize Ranking for the new team
-                        rankings.emplace_back(&teams.back(), 0, 0, 0, 0, 0);
-                        std::cout << "Team added successfully.\n";
-                    }
-                    else if(teamChoice == 2) {
-                        std::string name;
-                        std::cout << "Enter team name to remove: ";
-                        std::cin.ignore();
-                        std::getline(std::cin, name);
-                        bool found = false;
-                        for(auto it = teams.begin(); it != teams.end(); ++it) {
-                            if(it->getName() == name) {
-                                // Remove associated Ranking
-                                rankings.erase(
-                                    std::remove_if(rankings.begin(), rankings.end(),
-                                        [&](const Ranking& r) { return r.getTeam()->getName() == name; }),
-                                    rankings.end()
-                                );
-                                teams.erase(it);
-                                std::cout << "Team removed successfully.\n";
-                                found = true;
-                                break;
-                            }
-                        }
-                        if(!found) {
-                            std::cout << "Team not found.\n";
-                        }
-                    }
-                    else if(teamChoice == 3) {
-                        if(teams.empty()) {
-                            std::cout << "No teams available.\n";
-                        }
-                        else {
-                            std::cout << "\n--- Teams List ---\n";
-                            for(const auto& team : teams) {
-                                std::cout << "Name: " << team.getName() 
-                                          << ", Ranking: " << team.getRanking() << "\n";
-                            }
-                        }
-                    }
-                    else if(teamChoice != 0) {
-                        std::cout << "Invalid choice. Please try again.\n";
-                    }
-                } while(teamChoice != 0);
+            case 1:
+                manageTeams();
                 break;
-            }
-            case 2: {
-                int fieldChoice;
-                do {
-                    std::cout << "\n--- Manage Fields ---\n";
-                    std::cout << "1. Add Field\n";
-                    std::cout << "2. Remove Field\n";
-                    std::cout << "3. View Fields\n";
-                    std::cout << "0. Return to Main Menu\n";
-                    std::cout << "Enter your choice: ";
-                    std::cin >> fieldChoice;
-
-                    if(fieldChoice == 1) {
-                        std::string name;
-                        int capacity;
-                        std::cout << "Enter field name: ";
-                        std::cin.ignore(); // Clear newline from buffer
-                        std::getline(std::cin, name);
-                        std::cout << "Enter field capacity: ";
-                        std::cin >> capacity;
-                        fields.emplace_back(name, capacity);
-                        std::cout << "Field added successfully.\n";
-                    }
-                    else if(fieldChoice == 2) {
-                        std::string name;
-                        std::cout << "Enter field name to remove: ";
-                        std::cin.ignore();
-                        std::getline(std::cin, name);
-                        bool found = false;
-                        for(auto it = fields.begin(); it != fields.end(); ++it) {
-                            if(it->getName() == name) {
-                                fields.erase(it);
-                                std::cout << "Field removed successfully.\n";
-                                found = true;
-                                break;
-                            }
-                        }
-                        if(!found) {
-                            std::cout << "Field not found.\n";
-                        }
-                    }
-                    else if(fieldChoice == 3) {
-                        if(fields.empty()) {
-                            std::cout << "No fields available.\n";
-                        }
-                        else {
-                            std::cout << "\n--- Fields List ---\n";
-                            for(const auto& field : fields) {
-                                std::cout << "Name: " << field.getName() 
-                                          << ", Capacity: " << field.getCapacity() << "\n";
-                            }
-                        }
-                    }
-                    else if(fieldChoice != 0) {
-                        std::cout << "Invalid choice. Please try again.\n";
-                    }
-                } while(fieldChoice != 0);
+            case 2:
+                manageFields();
                 break;
-            }
-            case 3: {
-                if (teams.size() < 2) {
-                    std::cout << "Not enough teams to schedule a match.\n";
-                    break;
-                }
-                if (fields.empty()) {
-                    std::cout << "No fields available to schedule a match.\n";
-                    break;
-                }
-
-                std::cout << "\n--- Schedule Match ---\n";
-
-                // Select Team 1
-                std::cout << "Select Team 1:\n";
-                for (size_t i = 0; i < teams.size(); ++i) {
-                    std::cout << i + 1 << ". " << teams[i].getName() 
-                              << " (Ranking: " << teams[i].getRanking() << ")\n";
-                }
-                int team1Index;
-                std::cout << "Enter team 1 number: ";
-                std::cin >> team1Index;
-                if (team1Index < 1 || team1Index > teams.size()) {
-                    std::cout << "Invalid team selection.\n";
-                    break;
-                }
-                Team* team1 = &teams[team1Index - 1];
-
-                // Select Team 2
-                std::cout << "Select Team 2:\n";
-                for (size_t i = 0; i < teams.size(); ++i) {
-                    if ((int)(i + 1) != team1Index) { // Avoid selecting the same team
-                        std::cout << i + 1 << ". " << teams[i].getName() 
-                                  << " (Ranking: " << teams[i].getRanking() << ")\n";
-                    }
-                }
-                int team2Index;
-                std::cout << "Enter team 2 number: ";
-                std::cin >> team2Index;
-                if (team2Index < 1 || team2Index > teams.size() || team2Index == team1Index) {
-                    std::cout << "Invalid team selection.\n";
-                    break;
-                }
-                Team* team2 = &teams[team2Index - 1];
-
-                // Select Field
-                std::cout << "Select Field:\n";
-                for (size_t i = 0; i < fields.size(); ++i) {
-                    std::cout << i + 1 << ". " << fields[i].getName() 
-                              << " (Capacity: " << fields[i].getCapacity() << ")\n";
-                }
-                int fieldIndex;
-                std::cout << "Enter field number: ";
-                std::cin >> fieldIndex;
-                if (fieldIndex < 1 || fieldIndex > fields.size()) {
-                    std::cout << "Invalid field selection.\n";
-                    break;
-                }
-                Field* field = &fields[fieldIndex - 1];
-
-                // Enter Match Phase
-                std::cin.ignore(); // Clear newline from buffer
-                std::string phase;
-                std::cout << "Enter match phase (e.g., Group Stage, Quarter Final): ";
-                std::getline(std::cin, phase);
-
-                // Enter Scheduled Time
-                std::string scheduledTime;
-                std::cout << "Enter scheduled time (e.g., 2024-06-01 18:00): ";
-                std::getline(std::cin, scheduledTime);
-
-                // Create and add Match
-                matches.emplace_back(phase, team1, team2, field, scheduledTime);
-                std::cout << "Match scheduled successfully.\n";
+            case 3:
+                scheduleMatches();
                 break;
-            }
-            case 4: {
-                int regChoice;
-                do {
-                    std::cout << "\n--- Manage Registrations ---\n";
-                    std::cout << "1. Add Registration\n";
-                    std::cout << "2. Validate Registration\n";
-                    std::cout << "3. View Registrations\n";
-                    std::cout << "0. Return to Main Menu\n";
-                    std::cout << "Enter your choice: ";
-                    std::cin >> regChoice;
-
-                    if(regChoice == 1) {
-                        if(teams.empty()) {
-                            std::cout << "No teams available to register.\n";
-                            continue;
-                        }
-                        std::cout << "Select Team to Register:\n";
-                        for (size_t i = 0; i < teams.size(); ++i) {
-                            std::cout << i + 1 << ". " << teams[i].getName() << "\n";
-                        }
-                        int teamIndex;
-                        std::cout << "Enter team number: ";
-                        std::cin >> teamIndex;
-                        if (teamIndex < 1 || teamIndex > teams.size()) {
-                            std::cout << "Invalid team selection.\n";
-                            break;
-                        }
-                        Team* selectedTeam = &teams[teamIndex - 1];
-
-                        // Check if already registered
-                        bool alreadyRegistered = false;
-                        for(const auto& reg : registrations) {
-                            if(reg.getTeam()->getName() == selectedTeam->getName()) {
-                                alreadyRegistered = true;
-                                break;
-                            }
-                        }
-                        if(alreadyRegistered) {
-                            std::cout << "Team is already registered.\n";
-                            break;
-                        }
-
-                        // Enter registration date
-                        std::cin.ignore(); // Clear newline from buffer
-                        std::string date;
-                        std::cout << "Enter registration date (e.g., 2024-01-15): ";
-                        std::getline(std::cin, date);
-
-                        // Create and add Registration
-                        registrations.emplace_back(selectedTeam);
-                        registrations.back().setDateRegistered(date);
-                        registrations.back().setValidated(false);
-                        std::cout << "Registration added successfully. Awaiting validation.\n";
-                    }
-                    else if(regChoice == 2) {
-                        if(registrations.empty()) {
-                            std::cout << "No registrations to validate.\n";
-                            continue;
-                        }
-                        std::cout << "Select Registration to Validate:\n";
-                        int count = 1;
-                        for(const auto& reg : registrations) {
-                            std::cout << count++ << ". Team: " << reg.getTeam()->getName() 
-                                      << ", Date: " << reg.getDateRegistered() 
-                                      << ", Validated: " << (reg.isValidated() ? "Yes" : "No") << "\n";
-                        }
-                        int regIndex;
-                        std::cout << "Enter registration number to validate: ";
-                        std::cin >> regIndex;
-                        if(regIndex < 1 || regIndex > registrations.size()) {
-                            std::cout << "Invalid registration selection.\n";
-                            break;
-                        }
-                        if(registrations[regIndex - 1].isValidated()) {
-                            std::cout << "Registration already validated.\n";
-                        }
-                        else {
-                            registrations[regIndex - 1].setValidated(true);
-                            std::cout << "Registration validated successfully.\n";
-                        }
-                    }
-                    else if(regChoice == 3) {
-                        if(registrations.empty()) {
-                            std::cout << "No registrations available.\n";
-                        }
-                        else {
-                            std::cout << "\n--- Registrations List ---\n";
-                            for(const auto& reg : registrations) {
-                                std::cout << "Team: " << reg.getTeam()->getName() 
-                                          << ", Date Registered: " << reg.getDateRegistered() 
-                                          << ", Validated: " << (reg.isValidated() ? "Yes" : "No") << "\n";
-                            }
-                        }
-                    }
-                    else if(regChoice != 0) {
-                        std::cout << "Invalid choice. Please try again.\n";
-                    }
-                } while(regChoice != 0);
+            case 4:
+                manageRegistrations();
                 break;
-            }
-            case 5: {
-                if (referees.empty()) {
-                    std::cout << "No referees available. Please add referees first.\n";
-                    break;
-                }
-                if (matches.empty()) {
-                    std::cout << "No matches available to assign referees.\n";
-                    break;
-                }
-
-                // List matches without referees
-                std::vector<Match*> unassignedMatches;
-                for(auto &match : matches) {
-                    if(match.getReferee() == nullptr){
-                        unassignedMatches.push_back(&match);
-                    }
-                }
-
-                if(unassignedMatches.empty()) {
-                    std::cout << "All matches have referees assigned.\n";
-                    break;
-                }
-
-                std::cout << "\n--- Assign Referees ---\n";
-                std::cout << "Select a match to assign a referee:\n";
-                for(size_t i = 0; i < unassignedMatches.size(); ++i){
-                    std::cout << i + 1 << ". " << unassignedMatches[i]->getTeam1()->getName() 
-                              << " vs " << unassignedMatches[i]->getTeam2()->getName() 
-                              << " on " << unassignedMatches[i]->getScheduledTime() << "\n";
-                }
-                int matchChoice;
-                std::cout << "Enter match number: ";
-                std::cin >> matchChoice;
-                if(matchChoice < 1 || matchChoice > unassignedMatches.size()){
-                    std::cout << "Invalid match selection.\n";
-                    break;
-                }
-                Match* selectedMatch = unassignedMatches[matchChoice - 1];
-
-                // List referees
-                std::cout << "Select a referee to assign:\n";
-                for(size_t i = 0; i < referees.size(); ++i){
-                    std::cout << i + 1 << ". " << referees[i].getName() 
-                              << " (" << referees[i].getCertifications() << ")\n";
-                }
-                int refereeChoice;
-                std::cout << "Enter referee number: ";
-                std::cin >> refereeChoice;
-                if(refereeChoice < 1 || refereeChoice > referees.size()){
-                    std::cout << "Invalid referee selection.\n";
-                    break;
-                }
-                Referee* selectedReferee = &referees[refereeChoice - 1];
-
-                // Assign referee to match
-                selectedMatch->setReferee(selectedReferee);
-                std::cout << "Referee assigned successfully.\n";
+            case 5:
+                manageReferees();
                 break;
-            }
-            case 6: {
-                int ticketChoice;
-                do {
-                    std::cout << "\n--- Manage Tickets ---\n";
-                    std::cout << "1. Add Ticket\n";
-                    std::cout << "2. Remove Ticket\n";
-                    std::cout << "3. View Tickets\n";
-                    std::cout << "0. Return to Main Menu\n";
-                    std::cout << "Enter your choice: ";
-                    std::cin >> ticketChoice;
-
-                    if(ticketChoice == 1) {
-                        if(matches.empty()) {
-                            std::cout << "No matches available to assign tickets.\n";
-                            continue;
-                        }
-                        std::cout << "Select Match for the Ticket:\n";
-                        for (size_t i = 0; i < matches.size(); ++i) {
-                            std::cout << i + 1 << ". " << matches[i].getTeam1()->getName() 
-                                      << " vs " << matches[i].getTeam2()->getName() 
-                                      << " on " << matches[i].getScheduledTime() << "\n";
-                        }
-                        int matchIndex;
-                        std::cout << "Enter match number: ";
-                        std::cin >> matchIndex;
-                        if(matchIndex < 1 || matchIndex > matches.size()){
-                            std::cout << "Invalid match selection.\n";
-                            break;
-                        }
-                        Match* selectedMatch = &matches[matchIndex - 1];
-
-                        std::string seatNumber;
-                        double price;
-                        std::cout << "Enter seat number: ";
-                        std::cin.ignore();
-                        std::getline(std::cin, seatNumber);
-                        std::cout << "Enter price: ";
-                        std::cin >> price;
-
-                        // Create and add Ticket
-                        tickets.emplace_back(selectedMatch, seatNumber, price);
-                        std::cout << "Ticket added successfully.\n";
-                    }
-                    else if(ticketChoice == 2) {
-                        // Implement removal logic
-                        std::cout << "Ticket removal not implemented yet.\n";
-                    }
-                    else if(ticketChoice == 3) {
-                        if(tickets.empty()) {
-                            std::cout << "No tickets available.\n";
-                        }
-                        else {
-                            std::cout << "\n--- Tickets List ---\n";
-                            for(const auto& ticket : tickets) {
-                                std::cout << "Match: " << ticket.getMatch()->getTeam1()->getName() 
-                                          << " vs " << ticket.getMatch()->getTeam2()->getName()
-                                          << ", Seat: " << ticket.getSeatNumber()
-                                          << ", Price: $" << ticket.getPrice()
-                                          << ", Available: " << (ticket.isAvailable() ? "Yes" : "No") << "\n";
-                            }
-                        }
-                    }
-                    else if(ticketChoice != 0) {
-                        std::cout << "Invalid choice. Please try again.\n";
-                    }
-                } while(ticketChoice != 0);
+            case 6:
+                manageSpectators();
                 break;
-            }
-            case 7: {
-                if(matches.empty()) {
-                    std::cout << "No matches available to record results.\n";
-                    break;
-                }
-
-                // Find matches without results
-                std::vector<Match*> matchesWithoutResults;
-                for(auto &match : matches) {
-                    bool hasResult = false;
-                    for(auto &res : results) {
-                        if(res.getMatch() == &match) {
-                            hasResult = true;
-                            break;
-                        }
-                    }
-                    if(!hasResult) {
-                        matchesWithoutResults.push_back(&match);
-                    }
-                }
-
-                if(matchesWithoutResults.empty()) {
-                    std::cout << "All matches have recorded results.\n";
-                    break;
-                }
-
-                std::cout << "\n--- Record Results ---\n";
-                std::cout << "Select a match to record the result:\n";
-                for(size_t i = 0; i < matchesWithoutResults.size(); ++i){
-                    std::cout << i + 1 << ". " 
-                              << matchesWithoutResults[i]->getTeam1()->getName() 
-                              << " vs " << matchesWithoutResults[i]->getTeam2()->getName() 
-                              << " on " << matchesWithoutResults[i]->getScheduledTime() << "\n";
-                }
-                int matchChoice;
-                std::cout << "Enter match number: ";
-                std::cin >> matchChoice;
-                if(matchChoice < 1 || matchChoice > matchesWithoutResults.size()){
-                    std::cout << "Invalid match selection.\n";
-                    break;
-                }
-                Match* selectedMatch = matchesWithoutResults[matchChoice - 1];
-
-                int scoreTeam1, scoreTeam2;
-                std::cout << "Enter score for " << selectedMatch->getTeam1()->getName() << ": ";
-                std::cin >> scoreTeam1;
-                std::cout << "Enter score for " << selectedMatch->getTeam2()->getName() << ": ";
-                std::cin >> scoreTeam2;
-
-                // Get current time for recordedAt
-                std::time_t now = std::time(0);
-                char buf[80];
-                std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
-                std::string currentTime(buf);
-
-                // Create and add Result
-                results.emplace_back(selectedMatch, scoreTeam1, scoreTeam2);
-                results.back().setRecordedAt(currentTime);
-                std::cout << "Result recorded successfully.\n";
-
-                // Update Rankings
-                // Find Rankings for both teams
-                Ranking* ranking1 = nullptr;
-                Ranking* ranking2 = nullptr;
-                for(auto &rank : rankings) {
-                    if(rank.getTeam()->getName() == selectedMatch->getTeam1()->getName()) {
-                        ranking1 = &rank;
-                    }
-                    if(rank.getTeam()->getName() == selectedMatch->getTeam2()->getName()) {
-                        ranking2 = &rank;
-                    }
-                }
-
-                if(ranking1 == nullptr || ranking2 == nullptr) {
-                    std::cout << "Rankings not found for one or both teams.\n";
-                    break;
-                }
-
-                // Update games played
-                ranking1->setGamesPlayed(ranking1->getGamesPlayed() + 1);
-                ranking2->setGamesPlayed(ranking2->getGamesPlayed() + 1);
-
-                if(scoreTeam1 > scoreTeam2) {
-                    // Team1 wins
-                    ranking1->setWins(ranking1->getWins() + 1);
-                    ranking1->setPoints(ranking1->getPoints() + 3);
-
-                    // Team2 loses
-                    ranking2->setLosses(ranking2->getLosses() + 1);
-                }
-                else if(scoreTeam1 < scoreTeam2) {
-                    // Team2 wins
-                    ranking2->setWins(ranking2->getWins() + 1);
-                    ranking2->setPoints(ranking2->getPoints() + 3);
-
-                    // Team1 loses
-                    ranking1->setLosses(ranking1->getLosses() + 1);
-                }
-                else {
-                    // Draw
-                    ranking1->setDraws(ranking1->getDraws() + 1);
-                    ranking1->setPoints(ranking1->getPoints() + 1);
-
-                    ranking2->setDraws(ranking2->getDraws() + 1);
-                    ranking2->setPoints(ranking2->getPoints() + 1);
-                }
-
+            case 7:
+                recordResults();
                 break;
-            }
-            case 8: {
-                if(rankings.empty()) {
-                    std::cout << "No rankings available.\n";
-                    break;
-                }
-                // Sort rankings based on points, then goal difference (optional)
-                std::sort(rankings.begin(), rankings.end(), [](const Ranking& a, const Ranking& b) {
-                    if(a.getPoints() != b.getPoints())
-                        return a.getPoints() > b.getPoints();
-                    return a.getGamesPlayed() < b.getGamesPlayed(); // Example secondary criteria
-                });
-
-                std::cout << "\n--- Rankings ---\n";
-                for(size_t i = 0; i < rankings.size(); ++i) {
-                    const Ranking& rank = rankings[i];
-                    std::cout << i + 1 << ". " << rank.getTeam()->getName()
-                              << " - Points: " << rank.getPoints()
-                              << ", Games Played: " << rank.getGamesPlayed()
-                              << ", Wins: " << rank.getWins()
-                              << ", Draws: " << rank.getDraws()
-                              << ", Losses: " << rank.getLosses() << "\n";
-                }
+            case 8:
+                displayRankings();
                 break;
-            }
             case 0:
-                std::cout << "Exiting application.\n";
+                cout << "Fermeture de l'application.\n";
                 break;
             default:
-                std::cout << "Invalid choice. Please try again.\n";
+                cout << "Choix invalide. Veuillez réessayer.\n";
         }
-        std::cout << std::endl;
+        cout << endl;
     } while(choice != 0);
 
     return 0;
+}
+
+void manageTeams() {
+    int choice;
+    do {
+        cout << "\n--- Gestion des Équipes ---\n";
+        cout << "1. Ajouter une Équipe\n";
+        cout << "2. Supprimer une Équipe\n";
+        cout << "3. Consulter les Équipes\n";
+        cout << "4. Rechercher une Équipe\n";
+        cout << "0. Retour au Menu Principal\n";
+        cout << "Entrez votre choix: ";
+        cin >> choice;
+        cin.ignore();
+
+        if(choice == 1) {
+            Team newTeam; // Use the default constructor
+            newTeam.inputTeam();
+            teams.push_back(newTeam);
+            cout << "Équipe ajoutée avec succès.\n";
+        }
+        else if(choice == 2) {
+            string name;
+            cout << "Entrez le nom de l'équipe à supprimer: ";
+            getline(cin, name);
+            auto it = find_if(teams.begin(), teams.end(), [&](const Team& t) { return t.getName() == name; });
+            if(it != teams.end()) {
+                // Remove associated Registrations
+                registrations.erase(remove_if(registrations.begin(), registrations.end(),
+                    [&](const Registration& r) { return r.getTeam()->getName() == name; }), registrations.end());
+                teams.erase(it);
+                cout << "Équipe supprimée avec succès.\n";
+            }
+            else {
+                cout << "Équipe non trouvée.\n";
+            }
+        }
+        else if(choice == 3) {
+            if(teams.empty()) {
+                cout << "Aucune équipe disponible.\n";
+            }
+            else {
+                cout << "\n--- Liste des Équipes ---\n";
+                for(const auto& team : teams) {
+                    team.displayTeam();
+                    cout << "-------------------------\n";
+                }
+            }
+        }
+        else if(choice == 4) {
+            string criteria;
+            cout << "Entrez le nom de l'équipe à rechercher: ";
+            getline(cin, criteria);
+            Team* team = searchTeamByName(criteria);
+            if(team) {
+                team->displayTeam();
+            }
+            else {
+                cout << "Équipe non trouvée.\n";
+            }
+        }
+        else if(choice != 0) {
+            cout << "Choix invalide. Veuillez réessayer.\n";
+        }
+    } while(choice != 0);
+}
+
+void manageFields() {
+    int choice;
+    do {
+        cout << "\n--- Gestion des Terrains ---\n";
+        cout << "1. Ajouter un Terrain\n";
+        cout << "2. Supprimer un Terrain\n";
+        cout << "3. Consulter les Terrains\n";
+        cout << "4. Rechercher un Terrain\n";
+        cout << "0. Retour au Menu Principal\n";
+        cout << "Entrez votre choix: ";
+        cin >> choice;
+        cin.ignore();
+
+        if(choice == 1) {
+            string name;
+            int capacity;
+            cout << "Entrez le nom du terrain: ";
+            getline(cin, name);
+            cout << "Entrez la capacité du terrain: ";
+            cin >> capacity;
+            cin.ignore();
+            Field newField(name, capacity);
+            // Initialize seats based on capacity
+            for(int i = 1; i <= capacity; ++i) {
+                newField.getSeats().emplace_back(i);
+            }
+            fields.push_back(newField);
+            cout << "Terrain ajouté avec succès.\n";
+        }
+        else if(choice == 2) {
+            string name;
+            cout << "Entrez le nom du terrain à supprimer: ";
+            getline(cin, name);
+            auto it = find_if(fields.begin(), fields.end(), [&](const Field& f) { return f.getName() == name; });
+            if(it != fields.end()) {
+                // Remove associated Matches
+                matches.erase(remove_if(matches.begin(), matches.end(),
+                    [&](const Match& m) { return m.getField() && m.getField()->getName() == name; }), matches.end());
+                fields.erase(it);
+                cout << "Terrain supprimé avec succès.\n";
+            }
+            else {
+                cout << "Terrain non trouvé.\n";
+            }
+        }
+        else if(choice == 3) {
+            if(fields.empty()) {
+                cout << "Aucun terrain disponible.\n";
+            }
+            else {
+                cout << "\n--- Liste des Terrains ---\n";
+                for(const auto& field : fields) {
+                    field.displayField();
+                    cout << "-------------------------\n";
+                }
+            }
+        }
+        else if(choice == 4) {
+            string criteria;
+            cout << "Entrez le nom du terrain à rechercher: ";
+            getline(cin, criteria);
+            Field* field = searchFieldByName(criteria);
+            if(field) {
+                field->displayField();
+            }
+            else {
+                cout << "Terrain non trouvé.\n";
+            }
+        }
+        else if(choice != 0) {
+            cout << "Choix invalide. Veuillez réessayer.\n";
+        }
+    } while(choice != 0);
+}
+
+void scheduleMatches() {
+    int choice;
+    do {
+        cout << "\n--- Planification des Matchs ---\n";
+        cout << "1. Créer des Matchs\n";
+        cout << "2. Afficher les Matchs\n";
+        cout << "0. Retour au Menu Principal\n";
+        cout << "Entrez votre choix: ";
+        cin >> choice;
+        cin.ignore();
+
+        if(choice == 1) {
+            if(teams.size() < 2) {
+                cout << "Pas assez d'équipes pour planifier des matchs.\n";
+                continue;
+            }
+            if(fields.empty()) {
+                cout << "Aucun terrain disponible pour planifier des matchs.\n";
+                continue;
+            }
+            // For simplicity, create matches for each phase
+            vector<MatchPhase> phases = {MatchPhase::GroupStage, MatchPhase::QuarterFinal, MatchPhase::SemiFinal, MatchPhase::Final};
+            for(auto phase : phases) {
+                // Example: Create 2 matches per phase
+                for(int i = 0; i < 2; ++i) {
+                    // Assign teams randomly
+                    int team1Index = rand() % teams.size();
+                    int team2Index = rand() % teams.size();
+                    while(team2Index == team1Index) {
+                        team2Index = rand() % teams.size();
+                    }
+                    Team* team1 = &teams[team1Index];
+                    Team* team2 = &teams[team2Index];
+
+                    // Assign a random field
+                    int fieldIndex = rand() % fields.size();
+                    Field* field = &fields[fieldIndex];
+
+                    // Scheduled time can be set as a placeholder
+                    string scheduledTime = "2024-07-01 18:00";
+
+                    Match newMatch(team1, team2, scheduledTime);
+                    newMatch.setPhase(phase);
+                    newMatch.setField(field);
+                    matches.push_back(newMatch);
+                }
+            }
+            cout << "Matchs créés avec succès.\n";
+        }
+        else if(choice == 2) {
+            if(matches.empty()) {
+                cout << "Aucun match planifié.\n";
+            }
+            else {
+                cout << "\n--- Liste des Matchs ---\n";
+                for(const auto& match : matches) {
+                    cout << match.displayMatch() << endl;
+                }
+            }
+        }
+        else if(choice != 0) {
+            cout << "Choix invalide. Veuillez réessayer.\n";
+        }
+    } while(choice != 0);
+}
+
+void manageRegistrations() {
+    int choice;
+    do {
+        cout << "\n--- Inscriptions ---\n";
+        cout << "1. Inscrire une Équipe\n";
+        cout << "2. Valider une Inscription\n";
+        cout << "3. Annuler une Inscription\n";
+        cout << "4. Afficher les Inscriptions\n";
+        cout << "0. Retour au Menu Principal\n";
+        cout << "Entrez votre choix: ";
+        cin >> choice;
+        cin.ignore();
+
+        if(choice == 1) {
+            if(teams.empty()) {
+                cout << "Aucune équipe disponible à inscrire.\n";
+                continue;
+            }
+            cout << "Sélectionnez une équipe à inscrire:\n";
+            for(size_t i = 0; i < teams.size(); ++i) {
+                cout << i + 1 << ". " << teams[i].getName() << endl;
+            }
+            int teamIndex;
+            cout << "Entrez le numéro de l'équipe: ";
+            cin >> teamIndex;
+            cin.ignore();
+            if(teamIndex < 1 || teamIndex > teams.size()) {
+                cout << "Sélection invalide.\n";
+                continue;
+            }
+            Team* selectedTeam = &teams[teamIndex - 1];
+            // Check if already registered
+            bool alreadyRegistered = false;
+            for(const auto& reg : registrations) {
+                if(reg.getTeam()->getName() == selectedTeam->getName()) {
+                    alreadyRegistered = true;
+                    break;
+                }
+            }
+            if(alreadyRegistered) {
+                cout << "Équipe déjà inscrite.\n";
+                continue;
+            }
+            Registration newReg(selectedTeam);
+            newReg.inputRegistration();
+            registrations.push_back(newReg);
+            cout << "Inscription ajoutée avec succès. En attente de validation.\n";
+        }
+        else if(choice == 2) {
+            if(registrations.empty()) {
+                cout << "Aucune inscription à valider.\n";
+                continue;
+            }
+            cout << "Sélectionnez une inscription à valider:\n";
+            for(size_t i = 0; i < registrations.size(); ++i) {
+                cout << i + 1 << ". Équipe: " << registrations[i].getTeam()->getName()
+                     << ", Date: " << registrations[i].getDateRegistered()
+                     << ", Validée: " << (registrations[i].isValidated() ? "Oui" : "Non") << endl;
+            }
+            int regIndex;
+            cout << "Entrez le numéro de l'inscription: ";
+            cin >> regIndex;
+            cin.ignore();
+            if(regIndex < 1 || regIndex > registrations.size()) {
+                cout << "Sélection invalide.\n";
+                continue;
+            }
+            if(registrations[regIndex - 1].isValidated()) {
+                cout << "Inscription déjà validée.\n";
+            }
+            else {
+                registrations[regIndex - 1].Validate();
+                cout << "Inscription validée avec succès.\n";
+            }
+        }
+        else if(choice == 3) {
+            if(registrations.empty()) {
+                cout << "Aucune inscription à annuler.\n";
+                continue;
+            }
+            cout << "Sélectionnez une inscription à annuler:\n";
+            for(size_t i = 0; i < registrations.size(); ++i) {
+                cout << i + 1 << ". Équipe: " << registrations[i].getTeam()->getName()
+                     << ", Date: " << registrations[i].getDateRegistered()
+                     << ", Validée: " << (registrations[i].isValidated() ? "Oui" : "Non") << endl;
+            }
+            int regIndex;
+            cout << "Entrez le numéro de l'inscription: ";
+            cin >> regIndex;
+            cin.ignore();
+            if(regIndex < 1 || regIndex > registrations.size()) {
+                cout << "Sélection invalide.\n";
+                continue;
+            }
+            if(!registrations[regIndex - 1].isValidated()) {
+                cout << "Inscription déjà annulée.\n";
+            }
+            else {
+                registrations[regIndex - 1].inValidate();
+                cout << "Inscription annulée avec succès.\n";
+            }
+        }
+        else if(choice == 4) {
+            if(registrations.empty()) {
+                cout << "Aucune inscription disponible.\n";
+            }
+            else {
+                cout << "\n--- Liste des Inscriptions ---\n";
+                for(const auto& reg : registrations) {
+                    cout << "Équipe: " << reg.getTeam()->getName()
+                         << ", Date Inscription: " << reg.getDateRegistered()
+                         << ", Validée: " << (reg.isValidated() ? "Oui" : "Non") << endl;
+                }
+            }
+        }
+        else if(choice != 0) {
+            cout << "Choix invalide. Veuillez réessayer.\n";
+        }
+    } while(choice != 0);
+}
+
+void manageReferees() {
+    int choice;
+    do {
+        cout << "\n--- Gestion des Arbitres ---\n";
+        cout << "1. Ajouter un Arbitre\n";
+        cout << "2. Supprimer un Arbitre\n";
+        cout << "3. Consulter les Arbitres\n";
+        cout << "4. Assignation d'Arbitre à un Match\n";
+        cout << "0. Retour au Menu Principal\n";
+        cout << "Entrez votre choix: ";
+        cin >> choice;
+        cin.ignore();
+
+        if(choice == 1) {
+            Referee newRef("", "");
+            newRef.inputReferee();
+            referees.push_back(newRef);
+            cout << "Arbitre ajouté avec succès.\n";
+        }
+        else if(choice == 2) {
+            string name;
+            cout << "Entrez le nom de l'arbitre à supprimer: ";
+            getline(cin, name);
+            auto it = find_if(referees.begin(), referees.end(), [&](const Referee& r) { return r.getName() == name; });
+            if(it != referees.end()) {
+                // Remove referee from any assigned matches
+                for(auto &match : matches) {
+                    if(match.getReferee() && match.getReferee()->getName() == name) {
+                        match.setReferee(nullptr);
+                    }
+                }
+                referees.erase(it);
+                cout << "Arbitre supprimé avec succès.\n";
+            }
+            else {
+                cout << "Arbitre non trouvé.\n";
+            }
+        }
+        else if(choice == 3) {
+            if(referees.empty()) {
+                cout << "Aucun arbitre disponible.\n";
+            }
+            else {
+                cout << "\n--- Liste des Arbitres ---\n";
+                for(const auto& ref : referees) {
+                    ref.displayReferee();
+                    cout << "-------------------------\n";
+                }
+            }
+        }
+        else if(choice == 4) {
+            if(matches.empty()) {
+                cout << "Aucun match disponible.\n";
+                continue;
+            }
+            if(referees.empty()) {
+                cout << "Aucun arbitre disponible.\n";
+                continue;
+            }
+            cout << "Sélectionnez un match:\n";
+            for(size_t i = 0; i < matches.size(); ++i) {
+                cout << i + 1 << ". " << matches[i].displayMatch() << endl;
+            }
+            int matchIndex;
+            cout << "Entrez le numéro du match: ";
+            cin >> matchIndex;
+            cin.ignore();
+            if(matchIndex < 1 || matchIndex > matches.size()) {
+                cout << "Sélection invalide.\n";
+                continue;
+            }
+            Match* selectedMatch = &matches[matchIndex - 1];
+            if(selectedMatch->getReferee() != nullptr) {
+                cout << "Un arbitre est déjà assigné à ce match.\n";
+                continue;
+            }
+            cout << "Sélectionnez un arbitre à assigner:\n";
+            for(size_t i = 0; i < referees.size(); ++i) {
+                cout << i + 1 << ". " << referees[i].getName() << " (" << referees[i].getCertifications() << ")" << endl;
+            }
+            int refIndex;
+            cout << "Entrez le numéro de l'arbitre: ";
+            cin >> refIndex;
+            cin.ignore();
+            if(refIndex < 1 || refIndex > referees.size()) {
+                cout << "Sélection invalide.\n";
+                continue;
+            }
+            Referee* selectedRef = &referees[refIndex - 1];
+            selectedMatch->setReferee(selectedRef);
+            cout << "Arbitre assigné avec succès.\n";
+        }
+        else if(choice != 0) {
+            cout << "Choix invalide. Veuillez réessayer.\n";
+        }
+    } while(choice != 0);
+}
+
+void manageSpectators() {
+    int choice;
+    do {
+        cout << "\n--- Gestion des Spectateurs ---\n";
+        cout << "1. Acheter un Billet\n";
+        cout << "2. Supprimer un Billet\n";
+        cout << "3. Consulter les Billets\n";
+        cout << "0. Retour au Menu Principal\n";
+        cout << "Entrez votre choix: ";
+        cin >> choice;
+        cin.ignore();
+
+        if(choice == 1) {
+            if(matches.empty()) {
+                cout << "Aucun match disponible.\n";
+                continue;
+            }
+            cout << "Sélectionnez un match pour acheter un billet:\n";
+            for(size_t i = 0; i < matches.size(); ++i) {
+                cout << i + 1 << ". " << matches[i].displayMatch() << endl;
+            }
+            int matchIndex;
+            cout << "Entrez le numéro du match: ";
+            cin >> matchIndex;
+            cin.ignore();
+            if(matchIndex < 1 || matchIndex > matches.size()) {
+                cout << "Sélection invalide.\n";
+                continue;
+            }
+            Match* selectedMatch = &matches[matchIndex - 1];
+            
+            // Display seats
+            Field* field = selectedMatch->getField();
+            if(!field) {
+                cout << "Aucun terrain assigné à ce match.\n";
+                continue;
+            }
+            if(field->getCapacity() == 0) {
+                cout << "Capacité du terrain non définie.\n";
+                continue;
+            }
+
+            cout << "Sélectionnez un siège:\n";
+            for(const auto& seat : field->getSeats()) {
+                if(seat.isEmpty()) {
+                    cout << seat.getNum() << " - " << (seat.getType() == SeatType::VIP ? "VIP" : "Regular") << endl;
+                }
+            }
+            int seatNumber;
+            cout << "Entrez le numéro du siège: ";
+            cin >> seatNumber;
+            cin.ignore();
+            // Check availability
+            bool available = false;
+            Seat* selectedSeat = nullptr;
+            for(auto& seat : field->getSeats()) {
+                if(seat.getNum() == seatNumber && seat.isEmpty()) {
+                    available = true;
+                    selectedSeat = &seat;
+                    break;
+                }
+            }
+            if(!available) {
+                cout << "Siège non disponible.\n";
+                continue;
+            }
+
+            // Determine price based on seat type
+            double price = (selectedSeat->getType() == SeatType::VIP) ? VIP_PRICE : REGULAR_PRICE;
+
+            // Create and add ticket
+            int ticketId = tickets.size() + 1;
+            Ticket newTicket(ticketId, selectedMatch, selectedSeat, price);
+            tickets.push_back(newTicket);
+            // Mark seat as occupied
+            selectedSeat->setEmpty(false);
+            cout << "Billet acheté avec succès. Prix: $" << price << "\n";
+        }
+        else if(choice == 2) {
+            if(tickets.empty()) {
+                cout << "Aucun billet à supprimer.\n";
+                continue;
+            }
+            cout << "Sélectionnez un billet à supprimer:\n";
+            for(size_t i = 0; i < tickets.size(); ++i) {
+                cout << i + 1 << ". ";
+                tickets[i].displayTicket();
+            }
+            int ticketIndex;
+            cout << "Entrez le numéro du billet: ";
+            cin >> ticketIndex;
+            cin.ignore();
+            if(ticketIndex < 1 || ticketIndex > tickets.size()) {
+                cout << "Sélection invalide.\n";
+                continue;
+            }
+            // Free the seat
+            Seat* seat = tickets[ticketIndex - 1].getSeat();
+            if(seat) {
+                seat->setEmpty(true);
+            }
+            tickets.erase(tickets.begin() + ticketIndex - 1);
+            cout << "Billet supprimé avec succès.\n";
+        }
+        else if(choice == 3) {
+            if(tickets.empty()) {
+                cout << "Aucun billet disponible.\n";
+            }
+            else {
+                cout << "\n--- Liste des Billets ---\n";
+                for(const auto& ticket : tickets) {
+                    ticket.displayTicket();
+                    cout << "-------------------------\n";
+                }
+            }
+        }
+        else if(choice != 0) {
+            cout << "Choix invalide. Veuillez réessayer.\n";
+        }
+    } while(choice != 0);
+}
+
+void recordResults() {
+    if(matches.empty()) {
+        cout << "Aucun match disponible.\n";
+        return;
+    }
+    int choice;
+    do {
+        cout << "\n--- Enregistrement des Résultats ---\n";
+        cout << "1. Enregistrer le Résultat d'un Match\n";
+        cout << "2. Afficher les Résultats\n";
+        cout << "0. Retour au Menu Principal\n";
+        cout << "Entrez votre choix: ";
+        cin >> choice;
+        cin.ignore();
+
+        if(choice == 1) {
+            // List matches without results
+            vector<Match*> matchesWithoutResults;
+            for(auto &match : matches) {
+                bool hasResult = false;
+                for(auto &res : results) {
+                    if(res.getMatch() == &match) {
+                        hasResult = true;
+                        break;
+                    }
+                }
+                if(!hasResult && match.isPlayed()) {
+                    matchesWithoutResults.push_back(&match);
+                }
+            }
+
+            if(matchesWithoutResults.empty()) {
+                cout << "Tous les matchs ont des résultats enregistrés ou n'ont pas encore été joués.\n";
+                continue;
+            }
+
+            cout << "Sélectionnez un match pour enregistrer le résultat:\n";
+            for(size_t i = 0; i < matchesWithoutResults.size(); ++i) {
+                cout << i + 1 << ". " << matchesWithoutResults[i]->displayMatch() << endl;
+            }
+            int matchIndex;
+            cout << "Entrez le numéro du match: ";
+            cin >> matchIndex;
+            cin.ignore();
+            if(matchIndex < 1 || matchIndex > matchesWithoutResults.size()) {
+                cout << "Sélection invalide.\n";
+                continue;
+            }
+            Match* selectedMatch = matchesWithoutResults[matchIndex - 1];
+            int score1, score2;
+            cout << "Entrez le score de " << selectedMatch->getTeam1()->getName() << ": ";
+            cin >> score1;
+            cout << "Entrez le score de " << selectedMatch->getTeam2()->getName() << ": ";
+            cin >> score2;
+            cin.ignore();
+
+            Result newResult(selectedMatch, score1, score2);
+            newResult.AfterMatchCalculations();
+            results.push_back(newResult);
+            cout << "Résultat enregistré avec succès.\n";
+        }
+        else if(choice == 2) {
+            if(results.empty()) {
+                cout << "Aucun résultat disponible.\n";
+            }
+            else {
+                cout << "\n--- Liste des Résultats ---\n";
+                for(const auto& res : results) {
+                    cout << res.getMatch()->displayMatch() << "\n"
+                         << "Score: " << res.getScoreTeam1() << " - " << res.getScoreTeam2() << "\n"
+                         << "-------------------------\n";
+                }
+            }
+        }
+        else if(choice != 0) {
+            cout << "Choix invalide. Veuillez réessayer.\n";
+        }
+    } while(choice != 0);
+}
+
+void displayRankings() {
+    if(teams.empty()) {
+        cout << "Aucune équipe disponible pour le classement.\n";
+        return;
+    }
+    // Sort teams based on points
+    sort(teams.begin(), teams.end(), [](const Team& a, const Team& b) {
+        if(a.calculatePoints() != b.calculatePoints())
+            return a.calculatePoints() > b.calculatePoints();
+        // Additional criteria can be added here if available
+        return false;
+    });
+
+    cout << "\n--- Classement des Équipes ---\n";
+    for(size_t i = 0; i < teams.size(); ++i) {
+        const Team& team = teams[i];
+        cout << i + 1 << ". " << team.getName()
+             << " - Points: " << team.calculatePoints()
+             << ", Jeux Joués: " << team.getGamesPlayed()
+             << ", Victoires: " << team.getWins()
+             << ", Nuls: " << team.getDraws()
+             << ", Défaites: " << team.getLosses() << endl;
+    }
+}
+
+Team* searchTeamByName(const string& name) {
+    for(auto &team : teams) {
+        if(team.getName() == name) {
+            return &team;
+        }
+    }
+    return nullptr;
+}
+
+Field* searchFieldByName(const string& name) {
+    for(auto &field : fields) {
+        if(field.getName() == name) {
+            return &field;
+        }
+    }
+    return nullptr;
+}
+
+Referee* searchRefereeByName(const string& name) {
+    for(auto &ref : referees) {
+        if(ref.getName() == name) {
+            return &ref;
+        }
+    }
+    return nullptr;
 }
