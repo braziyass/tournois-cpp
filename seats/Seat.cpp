@@ -20,7 +20,12 @@ void Seat::setEmpty(bool e) {
 }
 
 SeatType Seat::getType() const {
-    return type;
+    if(num >= 1 && num <= 500) {
+        return SeatType::VIP;
+    }
+    else {
+        return SeatType::Regular;
+    }
 }
 
 void Seat::setType(SeatType t) {
