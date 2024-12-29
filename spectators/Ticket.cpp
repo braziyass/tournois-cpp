@@ -4,6 +4,15 @@
 Ticket::Ticket(int id, Match* match, Seat* seat, double price)
     : id(id), match(match), seat(seat), price(price) {}
 
+int Ticket::getId() const {
+
+    return id;
+}
+
+void Ticket::setId(int id) {
+    this->id = id;
+}
+
 
 Match* Ticket::getMatch() const {
     return match;

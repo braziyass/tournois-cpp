@@ -12,13 +12,11 @@
 #include "registrations/Registration.h"
 #include "seats/Seat.h"
 
-// Constants for ticket prices
 const double VIP_PRICE = 100.0;
 const double REGULAR_PRICE = 50.0;
 
 using namespace std;
 
-// Function declarations
 void manageTeams();
 void manageFields();
 void scheduleMatches();
@@ -31,7 +29,7 @@ Team* searchTeamByName(const string& name);
 Field* searchFieldByName(const string& name);
 Referee* searchRefereeByName(const string& name);
 
-// Global vectors
+
 vector<Team> teams;
 vector<Field> fields;
 vector<Match> matches;
@@ -41,8 +39,7 @@ vector<Result> results;
 vector<Ticket> tickets;
 
 int main() {
-    srand(time(0)); // Initialize random seed
-
+    srand(time(0)); 
     int choice;
     do {
         cout << "=== Gestionnaire de Tournoi de Football ===\n";
@@ -57,7 +54,7 @@ int main() {
         cout << "0. Quitter\n";
         cout << "Entrez votre choix: ";
         cin >> choice;
-        cin.ignore(); // Clear newline from buffer
+        cin.ignore();
 
         switch(choice) {
             case 1:
@@ -110,7 +107,7 @@ void manageTeams() {
         cin.ignore();
 
         if(choice == 1) {
-            Team newTeam; // Use the default constructor
+            Team newTeam;
             newTeam.inputTeam();
             teams.push_back(newTeam);
             cout << "Équipe ajoutée avec succès.\n";
@@ -121,7 +118,7 @@ void manageTeams() {
             getline(cin, name);
             auto it = find_if(teams.begin(), teams.end(), [&](const Team& t) { return t.getName() == name; });
             if(it != teams.end()) {
-                // Remove associated Registrations
+                
                 registrations.erase(remove_if(registrations.begin(), registrations.end(),
                     [&](const Registration& r) { return r.getTeam()->getName() == name; }), registrations.end());
                 teams.erase(it);
@@ -183,7 +180,7 @@ void manageFields() {
             cin >> capacity;
             cin.ignore();
             Field newField(name, capacity);
-            // Initialize seats based on capacity
+            
             for(int i = 1; i <= capacity; ++i) {
                 newField.getSeats().emplace_back(i);
             }
@@ -196,7 +193,7 @@ void manageFields() {
             getline(cin, name);
             auto it = find_if(fields.begin(), fields.end(), [&](const Field& f) { return f.getName() == name; });
             if(it != fields.end()) {
-                // Remove associated Matches
+                
                 matches.erase(remove_if(matches.begin(), matches.end(),
                     [&](const Match& m) { return m.getField() && m.getField()->getName() == name; }), matches.end());
                 fields.erase(it);
@@ -256,12 +253,12 @@ void scheduleMatches() {
                 cout << "Aucun terrain disponible pour planifier des matchs.\n";
                 continue;
             }
-            // For simplicity, create matches for each phase
+            
             vector<MatchPhase> phases = {MatchPhase::GroupStage, MatchPhase::QuarterFinal, MatchPhase::SemiFinal, MatchPhase::Final};
             for(auto phase : phases) {
-                // Example: Create 2 matches per phase
+                
                 for(int i = 0; i < 2; ++i) {
-                    // Assign teams randomly
+                    
                     int team1Index = rand() % teams.size();
                     int team2Index = rand() % teams.size();
                     while(team2Index == team1Index) {
@@ -333,7 +330,7 @@ void manageRegistrations() {
                 continue;
             }
             Team* selectedTeam = &teams[teamIndex - 1];
-            // Check if already registered
+            
             bool alreadyRegistered = false;
             for(const auto& reg : registrations) {
                 if(reg.getTeam()->getName() == selectedTeam->getName()) {
@@ -448,7 +445,7 @@ void manageReferees() {
             getline(cin, name);
             auto it = find_if(referees.begin(), referees.end(), [&](const Referee& r) { return r.getName() == name; });
             if(it != referees.end()) {
-                // Remove referee from any assigned matches
+                
                 for(auto &match : matches) {
                     if(match.getReferee() && match.getReferee()->getName() == name) {
                         match.setReferee(nullptr);
@@ -552,7 +549,7 @@ void manageSpectators() {
             }
             Match* selectedMatch = &matches[matchIndex - 1];
             
-            // Display seats
+            
             Field* field = selectedMatch->getField();
             if(!field) {
                 cout << "Aucun terrain assigné à ce match.\n";
@@ -573,7 +570,7 @@ void manageSpectators() {
             cout << "Entrez le numéro du siège: ";
             cin >> seatNumber;
             cin.ignore();
-            // Check availability
+            
             bool available = false;
             Seat* selectedSeat = nullptr;
             for(auto& seat : field->getSeats()) {
@@ -588,14 +585,14 @@ void manageSpectators() {
                 continue;
             }
 
-            // Determine price based on seat type
+            
             double price = (selectedSeat->getType() == SeatType::VIP) ? VIP_PRICE : REGULAR_PRICE;
 
-            // Create and add ticket
+            
             int ticketId = tickets.size() + 1;
             Ticket newTicket(ticketId, selectedMatch, selectedSeat, price);
             tickets.push_back(newTicket);
-            // Mark seat as occupied
+            
             selectedSeat->setEmpty(false);
             cout << "Billet acheté avec succès. Prix: $" << price << "\n";
         }
@@ -617,7 +614,7 @@ void manageSpectators() {
                 cout << "Sélection invalide.\n";
                 continue;
             }
-            // Free the seat
+            
             Seat* seat = tickets[ticketIndex - 1].getSeat();
             if(seat) {
                 seat->setEmpty(true);
@@ -659,7 +656,7 @@ void recordResults() {
         cin.ignore();
 
         if(choice == 1) {
-            // List matches without results
+            
             vector<Match*> matchesWithoutResults;
             for(auto &match : matches) {
                 bool hasResult = false;
@@ -728,11 +725,11 @@ void displayRankings() {
         cout << "Aucune équipe disponible pour le classement.\n";
         return;
     }
-    // Sort teams based on points
+    
     sort(teams.begin(), teams.end(), [](const Team& a, const Team& b) {
         if(a.calculatePoints() != b.calculatePoints())
             return a.calculatePoints() > b.calculatePoints();
-        // Additional criteria can be added here if available
+        
         return false;
     });
 

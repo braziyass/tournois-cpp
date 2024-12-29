@@ -7,8 +7,6 @@ Team::Team(const std::string& name)
 
 
 
-
-
 std::string Team::getName() const {
     return name;
 }

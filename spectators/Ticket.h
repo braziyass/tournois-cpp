@@ -7,8 +7,6 @@
 
 
 
-// const int VIP_PRICE = 100;
-// const int REGULAR_PRICE = 50;
 
 class Ticket {
 public:
